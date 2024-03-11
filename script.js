@@ -24,32 +24,39 @@ function spawnGoal() {
 
     writeToCell(goalRow, goalCol, 2);
 }
-let currentDirection = "";
 function keypress(event){
     switch (event.key) {
         case "ArrowUp":
-            controls.up = true;
-            controls.down = false;
-            controls.left = false;
-            controls.right = false;
+            if (!controls.down) {
+                controls.up = true;
+                controls.down = false;
+                controls.left = false;
+                controls.right = false;
+            }
             break;
         case "ArrowDown":
-            controls.down = true;
-            controls.up = false;
-            controls.left = false;
-            controls.right = false;
+            if (!controls.up) {
+                controls.down = true;
+                controls.up = false;
+                controls.left = false;
+                controls.right = false;
+            }
             break;
         case "ArrowLeft":
-            controls.left = true;
-            controls.right = false;
-            controls.up = false;
-            controls.down = false;
+            if (!controls.right) {
+                controls.left = true;
+                controls.right = false;
+                controls.up = false;
+                controls.down = false;
+            }
             break;
         case "ArrowRight":
-            controls.right = true;
-            controls.left = false;
-            controls.up = false;
-            controls.down = false;
+            if (!controls.left) {
+                controls.right = true;
+                controls.left = false;
+                controls.up = false;
+                controls.down = false;
+            }
             break;
     }
 }
@@ -63,8 +70,12 @@ const controls = {
 
 function tick() {
     // setup next tick
-    let direction
+    let direction = "right"
     setTimeout(tick, 500);
+
+    for (const part of queue) {
+        writeToCell(part.row, part.col, 0);
+    }
 
     if (controls.right) {
         direction = "right"
@@ -103,12 +114,21 @@ function tick() {
             break;
     }
 
+    for (let i = 0; i < queue.length; i++) {
+        if (i === queue.length - 1) continue;
+
+        if (head.row === queue[i].row && head.col === queue[i].col) {
+            gameOver();
+            return;
+        }
+    }
+
+    queue.push({ row: head.row, col: head.col });
+
     if (readFromCell(head.row, head.col) === 2) {
-        queue.push({ row: head.row, col: head.col });
-        writeToCell(head.row, head.col, 1);
         spawnGoal();
+        writeToCell(head.row, head.col, 0);
     } else {
-        queue.push({ row: head.row, col: head.col });
         const tail = queue.shift();
         writeToCell(tail.row, tail.col, 0);
     }
@@ -119,6 +139,11 @@ function tick() {
 
 
     displayBoard();
+}
+
+function gameOver() {
+    alert("Game Over!");
+    location.reload();
 }
 
 // ******** MODEL ********
