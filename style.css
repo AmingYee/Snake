@@ -6,7 +6,7 @@ body {
 
 #grid {
     display: grid;
-    grid-template-columns: repeat(10, max-content);
+    grid-template-columns: repeat(15, max-content);
     border-left: 1px dashed darkgray;
     border-top: 1px dashed darkgray;
     width: fit-content

@@ -3,10 +3,15 @@
 window.addEventListener("load", start);
 
 // ******** CONTROLLER ********
+const numRows = 15;
+const numCol = 15;
+
 function start() {
     console.log(`Javascript kører`);
 
     document.addEventListener("keydown", keypress);
+    initializeModel()
+    renderGrid(model)
     spawnGoal()
     // start ticking
     tick();
@@ -14,12 +19,12 @@ function start() {
 
 function spawnGoal() {
 
-    let goalRow = Math.floor(Math.random() * 10);
-    let goalCol = Math.floor(Math.random() * 10);
+    let goalRow = Math.floor(Math.random() * numRows);
+    let goalCol = Math.floor(Math.random() * numCol);
 
     while (readFromCell(goalRow, goalCol) === 1) {
-        goalRow = Math.floor(Math.random() * 10);
-        goalCol = Math.floor(Math.random() * 10);
+        goalRow = Math.floor(Math.random() * numRows);
+        goalCol = Math.floor(Math.random() * numCol);
     }
 
     writeToCell(goalRow, goalCol, 2);
@@ -71,7 +76,7 @@ const controls = {
 function tick() {
     // setup next tick
     let direction = "right"
-    setTimeout(tick, 500);
+    setTimeout(tick, 250);
 
     for (const part of queue) {
         writeToCell(part.row, part.col, 0);
@@ -91,24 +96,24 @@ function tick() {
         case "left":
             head.col--;
             if (head.col < 0) {
-                head.col = 9;
+                head.col = numCol - 1;
             }
             break;
         case "right":
             head.col++;
-            if (head.col > 9) {
+            if (head.col > numCol) {
                 head.col = 0;
             }
             break;
         case "up":
             head.row--;
             if (head.row < 0) {
-                head.row = 9;
+                head.row = numRows - 1;
             }
             break;
         case "down":
             head.row++;
-            if (head.row > 9) {
+            if (head.row > numRows) {
                 head.row = 0;
             }
             break;
@@ -173,18 +178,14 @@ const head = {
     col: queue[queue.length - 1].col
 };
 
-const model = [
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-];
+let model = [];
+
+function initializeModel() {
+    model = [];
+    for (let i = 0; i < numRows; i++) {
+        model[i] = new Array(numCol).fill(0);
+    }
+}
 
 function writeToCell(row, col, value) {
     model[row][col] = value;
@@ -198,11 +199,23 @@ function readFromCell(row, col) {
 
 // ******** VIEW ********
 
+function renderGrid(model) {
+    const gameContainer = document.getElementById('grid');
+    gameContainer.innerHTML = '';
+    for (let i = 0; i < model.length; i++) {
+        for (let ii = 0; ii < model[i].length; ii++) {
+            const cell = document.createElement('div');
+            cell.className = 'cell';
+            gameContainer.appendChild(cell);
+        }
+    }
+}
+
 function displayBoard() {
     const cells = document.querySelectorAll("#grid .cell");
-    for (let row = 0; row < 10; row++) {
-        for (let col = 0; col < 10; col++) {
-            const index = row * 10 + col;
+    for (let row = 0; row < numRows; row++) {
+        for (let col = 0; col < numCol; col++) {
+            const index = row * numCol + col;
 
             switch (readFromCell(row, col)) {
                 case 0:
