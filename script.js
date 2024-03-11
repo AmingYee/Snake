@@ -5,6 +5,7 @@ window.addEventListener("load", start);
 // ******** CONTROLLER ********
 const numRows = 15;
 const numCol = 15;
+let game = true;
 
 function start() {
     console.log(`Javascript kører`);
@@ -119,12 +120,14 @@ function tick() {
             break;
     }
 
-    for (let i = 0; i < queue.length; i++) {
-        if (i === queue.length - 1) continue;
+    while (game === true) {
+        for (let i = 0; i < queue.length; i++) {
+            if (i === queue.length - 1) continue;
 
-        if (head.row === queue[i].row && head.col === queue[i].col) {
-            gameOver();
-            return;
+            if (head.row === queue[i].row && head.col === queue[i].col) {
+                gameOver();
+                return;
+            }
         }
     }
 
@@ -146,6 +149,7 @@ function tick() {
 }
 
 function gameOver() {
+    game = false;
     alert("Game Over!");
     location.reload();
 }
