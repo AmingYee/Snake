@@ -101,7 +101,7 @@ function tick() {
             break;
         case "right":
             head.col++;
-            if (head.col > numCol) {
+            if (head.col >= numCol) {
                 head.col = 0;
             }
             break;
@@ -113,7 +113,7 @@ function tick() {
             break;
         case "down":
             head.row++;
-            if (head.row > numRows) {
+            if (head.row >= numRows) {
                 head.row = 0;
             }
             break;
@@ -132,7 +132,6 @@ function tick() {
 
     if (readFromCell(head.row, head.col) === 2) {
         spawnGoal();
-        writeToCell(head.row, head.col, 0);
     } else {
         const tail = queue.shift();
         writeToCell(tail.row, tail.col, 0);
